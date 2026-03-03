@@ -1,10 +1,11 @@
 :root {
-    --color-bg: #f4f4f9;
-    --color-primary: #4a90e2;
-    --color-secondary: #2c3e50;
-    --color-accent-high: #e74c3c;
-    --color-accent-medium: #f1c40f;
-    --color-accent-low: #2ecc71;
+    /* pastels */
+    --color-bg: #faf7ff;
+    --color-primary: #a7c7e7;
+    --color-secondary: #6d6875;
+    --color-accent-high: #ff9a9e;
+    --color-accent-medium: #fddde6;
+    --color-accent-low: #b5ead7;
     --font-base: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
@@ -40,7 +41,9 @@ main {
     background-color: white;
     border-right: 1px solid #ddd;
     padding: var(--spacing-md);
+    border-radius: 12px;
 }
+
 
 .tasks {
     flex: 1;
@@ -53,12 +56,14 @@ main {
 .task {
     background-color: white;
     padding: var(--spacing-md);
-    border-radius: 4px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
+
 
 .task.completed {
     background-color: #ecf0f1;
@@ -77,10 +82,11 @@ main {
 }
 
 .badge {
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
     font-size: 0.8rem;
     color: white;
+    font-weight: 600;
 }
 
 .badge.high { background-color: var(--color-accent-high); }
