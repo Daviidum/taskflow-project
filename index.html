@@ -1,42 +1,128 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maqueta de App de Tareas</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tareas ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-    <header>
-        <h1>Mi Lista de Tareas</h1>
-    </header>
-    <main>
-        <aside class="sidebar">
-            <nav>
-                <ul>
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Categorías</a></li>
-                    <li><a href="#">Configuración</a></li>
-                </ul>
-            </nav>
-        </aside>
-        <section class="tasks">
-            <article class="task">
-                <h2 class="title">Comprar GTA VI</h2>
-                <span class="category">Ocio</span>
-                <span class="badge high">Muy Alta</span>
-            </article>
-            <article class="task">
-                <h2 class="title">Revisar correo</h2>
-                <span class="category">Trabajo</span>
-                <span class="badge medium">Media</span>
-            </article>
-            <article class="task">
-                <h2 class="title">Llamar al médico</h2>
-                <span class="category">Salud</span>
-                <span class="badge low">Baja</span>
-            </article>
-        </section>
-    </main>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">✦</div>
+    <div class="logo-text">Mis <span>Tareas</span></div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-pill">📋 Total: <strong id="stat-total">0</strong></div>
+    <div class="stat-pill">✅ Hechas: <strong id="stat-done">0</strong></div>
+    <div class="stat-pill">🔥 Hoy: <strong id="stat-today">0</strong></div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Progress -->
+    <div class="widget">
+      <div class="widget-title">📊 Progreso</div>
+      <div class="progress-circle-wrap">
+        <svg width="100" height="100" class="progress-ring">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#c4b5f4"/>
+              <stop offset="100%" stop-color="#f7a8b8"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg"   cx="50" cy="50" r="35"/>
+          <circle class="ring-fill" cx="50" cy="50" r="35" id="ring"/>
+          <!-- Text group counter-rotated so it stays upright -->
+          <g class="ring-text-group">
+            <text class="ring-label" x="50" y="47" id="ring-pct">0%</text>
+            <text class="ring-sub"   x="50" y="60">completado</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="widget">
+      <div class="widget-title">🏷️ Categorías</div>
+      <div class="cat-list" id="cat-list">
+        <button class="cat-btn active" data-cat="all" onclick="filterCat(this, 'all')">
+          <span class="cat-left"><span class="cat-dot" style="background:#c4b5f4"></span>Todas</span>
+          <span class="cat-count" id="cnt-all">0</span>
+        </button>
+        <button class="cat-btn" data-cat="personal" onclick="filterCat(this, 'personal')">
+          <span class="cat-left"><span class="cat-dot" style="background:#f7a8b8"></span>Personal</span>
+          <span class="cat-count" id="cnt-personal">0</span>
+        </button>
+        <button class="cat-btn" data-cat="trabajo" onclick="filterCat(this, 'trabajo')">
+          <span class="cat-left"><span class="cat-dot" style="background:#b3d9f7"></span>Trabajo</span>
+          <span class="cat-count" id="cnt-trabajo">0</span>
+        </button>
+        <button class="cat-btn" data-cat="salud" onclick="filterCat(this, 'salud')">
+          <span class="cat-left"><span class="cat-dot" style="background:#a8e6cf"></span>Salud</span>
+          <span class="cat-count" id="cnt-salud">0</span>
+        </button>
+        <button class="cat-btn" data-cat="hogar" onclick="filterCat(this, 'hogar')">
+          <span class="cat-left"><span class="cat-dot" style="background:#ffd6b0"></span>Hogar</span>
+          <span class="cat-count" id="cnt-hogar">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quote -->
+    <div class="widget quote-widget">
+      <div class="widget-title">💬 Inspiración</div>
+      <p class="quote-text"   id="quote-text">"El secreto de salir adelante es comenzar."</p>
+      <p class="quote-author" id="quote-author">— Mark Twain</p>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Add task -->
+    <div class="add-card">
+      <h2>✨ Nueva tarea</h2>
+      <div class="form-row">
+        <input type="text" id="task-input" placeholder="¿Qué tienes que hacer hoy?"/>
+        <select id="priority-select">
+          <option value="medium">🟡 Media</option>
+          <option value="high">🔴 Alta</option>
+          <option value="low">🟢 Baja</option>
+        </select>
+        <select id="cat-select">
+          <option value="personal">Personal</option>
+          <option value="trabajo">Trabajo</option>
+          <option value="salud">Salud</option>
+          <option value="hogar">Hogar</option>
+        </select>
+        <button class="btn-add" onclick="addTask()">+ Añadir</button>
+      </div>
+    </div>
+
+    <!-- Tasks list -->
+    <div class="tasks-card">
+      <div class="tasks-header">
+        <h2>📌 Lista de tareas</h2>
+        <button class="clear-done" onclick="clearDone()">Borrar completadas</button>
+      </div>
+      <div class="search-wrap" style="margin-bottom:1rem">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="filter-input" placeholder="Buscar tarea..." oninput="renderTasks()"/>
+      </div>
+      <ul id="task-list"></ul>
+    </div>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
