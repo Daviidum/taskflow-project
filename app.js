@@ -15,9 +15,9 @@ if (!tasks.length) {
   tasks = [
     { id: 1, text: 'Revisar correos del trabajo', priority: 'high',   cat: 'trabajo',   done: false },
     { id: 2, text: 'Ir al gimnasio 🏋️',           priority: 'medium', cat: 'salud',     done: false },
-    { id: 3, text: 'Comprar frutas y verduras',    priority: 'low',    cat: 'hogar',     done: true  },
-    { id: 4, text: 'Leer 30 minutos 📚',           priority: 'low',    cat: 'personal',  done: false },
-    { id: 5, text: 'Preparar presentación del lunes', priority: 'high', cat: 'trabajo',  done: false },
+    { id: 3, text: 'Ir a la biblioteca Florida',    priority: 'low',    cat: 'hogar',     done: true  },
+    { id: 4, text: 'Darle un beso a Irene',           priority: 'low',    cat: 'personal',  done: false },
+    { id: 5, text: 'Darle un abrazo a la prima de Irene', priority: 'high', cat: 'trabajo',  done: false },
   ];
   save();
 }
