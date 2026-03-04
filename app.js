@@ -11,32 +11,26 @@ document.getElementById('quote-text').textContent = q.text;
 document.getElementById('quote-author').textContent = q.author;
 
 const DEFAULT_TASKS = [
-  { id: 1, text: 'Revisar correos del trabajo', priority: 'high',   cat: 'trabajo',   done: false },
-  { id: 2, text: 'Ir al gimnasio 🏋️',           priority: 'medium', cat: 'salud',     done: false },
-  { id: 3, text: 'Ir a la biblioteca Florida',    priority: 'low',    cat: 'hogar',     done: true  },
-  { id: 4, text: 'Darle un beso a Irene',          priority: 'low',    cat: 'personal',  done: false },
-  { id: 5, text: 'Darle un abrazo a la prima de Irene', priority: 'high', cat: 'trabajo', done: false },
+  { id: 1, text: 'Enviar deberes a Baron Jack',        priority: 'high',   cat: 'trabajo',     done: false },
+  { id: 2, text: 'Recoger el Set Up',                  priority: 'medium', cat: 'hogar',       done: false },
+  { id: 3, text: 'Jugar al Euro Truck Simulator 2 🚛', priority: 'low',    cat: 'videojuegos', done: false },
+  { id: 4, text: 'Ir al cine 🎬',                      priority: 'low',    cat: 'ocio',        done: false },
+  { id: 5, text: 'Hacer la compra semanal 🛒',         priority: 'medium', cat: 'hogar',       done: false },
 ];
 
 let tasks = JSON.parse(localStorage.getItem('tasks_v2') || '[]');
 
 if (tasks.length === 0) {
-  // Primera vez: cargar defaults tal cual
   tasks = DEFAULT_TASKS.slice();
   save();
 } else {
-  // Ya hay datos guardados: actualizar texto y metadatos de las tareas default por ID
-  // para que los cambios en el código siempre se reflejen en pantalla
   let changed = false;
   DEFAULT_TASKS.forEach(def => {
     const existing = tasks.find(t => t.id === def.id);
     if (!existing) {
-      // La tarea default no existe aún → añadirla
       tasks.push(def);
       changed = true;
     } else {
-      // Sincronizar texto, categoría y prioridad desde el código fuente
-      // (respetando el estado done que el usuario haya establecido)
       if (
         existing.text !== def.text ||
         existing.cat !== def.cat ||
@@ -128,7 +122,14 @@ function renderTasks() {
 }
 
 function catLabel(c) {
-  return { personal: '👤 Personal', trabajo: '💼 Trabajo', salud: '🌿 Salud', hogar: '🏠 Hogar' }[c] || c;
+  return {
+    personal:    '👤 Personal',
+    trabajo:     '💼 Trabajo',
+    salud:       '🌿 Salud',
+    hogar:       '🏠 Hogar',
+    videojuegos: '🎮 Videojuegos',
+    ocio:        '🎉 Ocio',
+  }[c] || c;
 }
 function priLabel(p) {
   return { high: 'Alta', medium: 'Media', low: 'Baja' }[p] || p;
@@ -145,7 +146,7 @@ function updateStats() {
 }
 
 function updateCounts() {
-  const cats = ['personal', 'trabajo', 'salud', 'hogar'];
+  const cats = ['personal', 'trabajo', 'salud', 'hogar', 'videojuegos', 'ocio'];
   document.getElementById('cnt-all').textContent = tasks.length;
   cats.forEach(c => {
     const el = document.getElementById('cnt-' + c);
@@ -179,16 +180,9 @@ function editTask(id) {
 function replaceTask(oldText, newText) {
   let changed = false;
   tasks.forEach(t => {
-    if (t.text === oldText) {
-      t.text = newText;
-      changed = true;
-    }
+    if (t.text === oldText) { t.text = newText; changed = true; }
   });
-  if (changed) {
-    save();
-    renderTasks();
-    updateStats();
-  }
+  if (changed) { save(); renderTasks(); updateStats(); }
 }
 
 function resetStorage() {
