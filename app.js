@@ -10,16 +10,46 @@ const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 document.getElementById('quote-text').textContent = q.text;
 document.getElementById('quote-author').textContent = q.author;
 
+const DEFAULT_TASKS = [
+  { id: 1, text: 'Revisar correos del trabajo', priority: 'high',   cat: 'trabajo',   done: false },
+  { id: 2, text: 'Ir al gimnasio 🏋️',           priority: 'medium', cat: 'salud',     done: false },
+  { id: 3, text: 'Ir a la biblioteca Florida',    priority: 'low',    cat: 'hogar',     done: true  },
+  { id: 4, text: 'Darle un beso a Irene',          priority: 'low',    cat: 'personal',  done: false },
+  { id: 5, text: 'Darle un abrazo a la prima de Irene', priority: 'high', cat: 'trabajo', done: false },
+];
+
 let tasks = JSON.parse(localStorage.getItem('tasks_v2') || '[]');
-if (!tasks.length) {
-  tasks = [
-    { id: 1, text: 'Revisar correos del trabajo', priority: 'high',   cat: 'trabajo',   done: false },
-    { id: 2, text: 'Ir al gimnasio 🏋️',           priority: 'medium', cat: 'salud',     done: false },
-    { id: 3, text: 'Ir a la biblioteca Florida',    priority: 'low',    cat: 'hogar',     done: true  },
-    { id: 4, text: 'Darle un beso a Irene',           priority: 'low',    cat: 'personal',  done: false },
-    { id: 5, text: 'Darle un abrazo a la prima de Irene', priority: 'high', cat: 'trabajo',  done: false },
-  ];
+
+if (tasks.length === 0) {
+  // Primera vez: cargar defaults tal cual
+  tasks = DEFAULT_TASKS.slice();
   save();
+} else {
+  // Ya hay datos guardados: actualizar texto y metadatos de las tareas default por ID
+  // para que los cambios en el código siempre se reflejen en pantalla
+  let changed = false;
+  DEFAULT_TASKS.forEach(def => {
+    const existing = tasks.find(t => t.id === def.id);
+    if (!existing) {
+      // La tarea default no existe aún → añadirla
+      tasks.push(def);
+      changed = true;
+    } else {
+      // Sincronizar texto, categoría y prioridad desde el código fuente
+      // (respetando el estado done que el usuario haya establecido)
+      if (
+        existing.text !== def.text ||
+        existing.cat !== def.cat ||
+        existing.priority !== def.priority
+      ) {
+        existing.text     = def.text;
+        existing.cat      = def.cat;
+        existing.priority = def.priority;
+        changed = true;
+      }
+    }
+  });
+  if (changed) save();
 }
 
 let activeFilter = 'all';
@@ -84,7 +114,7 @@ function renderTasks() {
     <li class="task-item ${t.done ? 'done' : ''}" data-priority="${t.priority}">
       <div class="custom-check ${t.done ? 'checked' : ''}" onclick="toggleDone(${t.id})"></div>
       <div class="task-body">
-        <div class="task-text">${t.text}</div>
+        <div class="task-text" onclick="editTask(${t.id})">${t.text}</div>
         <div class="task-meta">
           <span class="task-cat">${catLabel(t.cat)}</span>
           <span class="badge ${t.priority}">${priLabel(t.priority)}</span>
@@ -131,7 +161,45 @@ function updateRing(pct) {
   document.getElementById('ring-pct').textContent = pct + '%';
 }
 
-// Enter to add
+function editTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  const newText = prompt('Modifica la descripción de la tarea:', t.text);
+  if (newText !== null) {
+    const trimmed = newText.trim();
+    if (trimmed && trimmed !== t.text) {
+      t.text = trimmed;
+      save();
+      renderTasks();
+      updateStats();
+    }
+  }
+}
+
+function replaceTask(oldText, newText) {
+  let changed = false;
+  tasks.forEach(t => {
+    if (t.text === oldText) {
+      t.text = newText;
+      changed = true;
+    }
+  });
+  if (changed) {
+    save();
+    renderTasks();
+    updateStats();
+  }
+}
+
+function resetStorage() {
+  localStorage.removeItem('tasks_v2');
+  tasks = DEFAULT_TASKS.slice();
+  todayAdded = 0;
+  save();
+  renderTasks();
+  updateStats();
+}
+
 document.getElementById('task-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') addTask();
 });
