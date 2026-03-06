@@ -1,33 +1,7 @@
 {
   "name": "proyecto",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "http-server -p 8080",
-    "build": "tailwindcss -i ./styles.css -o ./styles.css",
-    "watch": "tailwindcss -i ./styles.css -o ./styles.css --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Daviidum/Proyecto.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Daviidum/Proyecto/issues"
-  },
-  "homepage": "https://github.com/Daviidum/Proyecto#readme",
-  "devDependencies": {
-    "autoprefixer": "^10.4.27",
-    "http-server": "^14.1.1",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.1"
-  },
-  "dependencies": {
-    "@tailwindcss/cli": "^4.2.1"
+    "build": "echo 'No build needed'"
   }
 }
