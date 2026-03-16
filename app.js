@@ -41,8 +41,19 @@ function toggleTheme() {
 }
 
 // ══════════════════════════════════════════
-//  QUOTES
+//  UTILITIES
 // ══════════════════════════════════════════
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 const QUOTES = [
   { text: '"El secreto de salir adelante es comenzar."',                                      author: '— Mark Twain'      },
   { text: '"Organízate. Una tarea a la vez cambia el mundo."',                                author: '— Anónimo'         },
@@ -50,6 +61,21 @@ const QUOTES = [
   { text: '"Cada gran logro fue una vez un sueño imposible."',                                author: '— Harriet Tubman'  },
   { text: '"No cuentes los días. Haz que los días cuenten."',                                 author: '— Muhammad Ali'    },
 ];
+
+const CATEGORIES = {
+  personal: '👤 Personal',
+  trabajo: '💼 Trabajo',
+  salud: '🌿 Salud',
+  hogar: '🏠 Hogar',
+  videojuegos: '🎮 Videojuegos',
+  ocio: '🎉 Ocio',
+};
+
+const PRIORITIES = {
+  high: 'Alta',
+  medium: 'Media',
+  low: 'Baja',
+};
 
 function loadQuote() {
   const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
@@ -70,8 +96,15 @@ const DEFAULT_TASKS = [
   { id: 5, text: 'Hacer la compra semanal 🛒',         priority: 'medium', cat: 'hogar',    done: false },
 ];
 
-let tasks      = JSON.parse(localStorage.getItem('tasks_v2') || '[]');
+let tasks = [];
 let todayAdded = 0;
+
+try {
+  const stored = localStorage.getItem('tasks_v2');
+  if (stored) tasks = JSON.parse(stored);
+} catch (e) {
+  console.error('Failed to load tasks from localStorage:', e);
+}
 
 // Seed defaults on first load
 if (tasks.length === 0) {
@@ -80,12 +113,17 @@ if (tasks.length === 0) {
 }
 
 let activeFilter = 'all';
+let ringElement, ringPctElement;
 
 // ══════════════════════════════════════════
 //  PERSISTENCE
 // ══════════════════════════════════════════
 function save() {
-  localStorage.setItem('tasks_v2', JSON.stringify(tasks));
+  try {
+    localStorage.setItem('tasks_v2', JSON.stringify(tasks));
+  } catch (e) {
+    console.error('Failed to save tasks to localStorage:', e);
+  }
 }
 
 // ══════════════════════════════════════════
@@ -228,7 +266,7 @@ function updateStats() {
 }
 
 function updateCounts() {
-  const cats = ['personal', 'trabajo', 'salud', 'hogar', 'videojuegos', 'ocio'];
+  const cats = Object.keys(CATEGORIES);
   const cntAll = document.getElementById('cnt-all');
   if (cntAll) cntAll.textContent = tasks.length;
   cats.forEach(c => {
@@ -238,12 +276,12 @@ function updateCounts() {
 }
 
 function updateRing(pct) {
+  if (!ringElement) ringElement = document.getElementById('ring');
+  if (!ringPctElement) ringPctElement = document.getElementById('ring-pct');
   const circumference = 2 * Math.PI * 35;
-  const offset        = circumference - (pct / 100) * circumference;
-  const ring          = document.getElementById('ring');
-  const ringPct       = document.getElementById('ring-pct');
-  if (ring)    { ring.style.strokeDasharray = circumference; ring.style.strokeDashoffset = offset; }
-  if (ringPct) ringPct.textContent = pct + '%';
+  const offset = circumference - (pct / 100) * circumference;
+  if (ringElement) { ringElement.style.strokeDasharray = circumference; ringElement.style.strokeDashoffset = offset; }
+  if (ringPctElement) ringPctElement.textContent = pct + '%';
 }
 
 // ══════════════════════════════════════════
@@ -254,18 +292,11 @@ function escHtml(str) {
 }
 
 function catLabel(c) {
-  return {
-    personal:    '👤 Personal',
-    trabajo:     '💼 Trabajo',
-    salud:       '🌿 Salud',
-    hogar:       '🏠 Hogar',
-    videojuegos: '🎮 Videojuegos',
-    ocio:        '🎉 Ocio',
-  }[c] || c;
+  return CATEGORIES[c] || c;
 }
 
 function priLabel(p) {
-  return { high: 'Alta', medium: 'Media', low: 'Baja' }[p] || p;
+  return PRIORITIES[p] || p;
 }
 
 function badgeClass(p) {
@@ -295,6 +326,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const taskInput = document.getElementById('task-input');
   if (taskInput) taskInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+
+  const filterInput = document.getElementById('filter-input');
+  if (filterInput) {
+    const debouncedRender = debounce(() => renderTasks(), 300);
+    filterInput.addEventListener('input', debouncedRender);
+  }
 
   renderTasks();
   updateStats();
