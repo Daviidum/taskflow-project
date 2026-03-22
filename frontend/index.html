@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MisTareas ✨</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans:  ['"DM Sans"', 'sans-serif'],
+          },
+          colors: {
+            lavender: { 100: '#f0ebff', 200: '#e8e0ff', 300: '#c4b5f4', 500: '#9b7fe8', 700: '#734fc0' },
+            rose:     { 100: '#fde8ef', 200: '#fbcfe8', 300: '#f7a8b8', 500: '#e8849a' },
+            mint:     { 300: '#a8e6cf', 500: '#5fbf8d' },
+            sky:      { 200: '#b3d9f7' },
+            peach:    { 200: '#ffd6b0', 300: '#ffba80' },
+          },
+          /* ── Breakpoints extendidos ─────────────────────
+             xs   480px   Móvil grande / iPhone Pro Max
+             sm   640px   Estándar Tailwind
+             lg   1024px  Desktop
+             2xl  1536px  Pantallas anchas
+             3xl  1920px  Full HD / 1080p
+             4xl  2560px  QHD / 1440p  ← tu objetivo
+             5xl  3840px  4K UHD
+          ───────────────────────────────────────────── */
+          screens: {
+            'xs':  '480px',
+            'sm':  '640px',
+            'md':  '768px',
+            'lg':  '1024px',
+            'xl':  '1280px',
+            '2xl': '1536px',
+            '3xl': '1920px',
+            '4xl': '2560px',
+            '5xl': '3840px',
+          },
+          maxWidth: {
+            '8xl':  '88rem',
+            '9xl':  '100rem',
+            '10xl': '120rem',
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="bg-stone-100 dark:bg-neutral-950 text-stone-900 dark:text-stone-100 min-h-screen transition-colors duration-300">
+
+  <!-- ══════════════ HEADER ══════════════ -->
+  <header class="sticky top-0 z-50 flex items-center justify-between
+                 px-4 sm:px-6 lg:px-10 3xl:px-16 4xl:px-24 5xl:px-32
+                 py-3 sm:py-4 3xl:py-5 4xl:py-7 5xl:py-9
+                 bg-white/90 dark:bg-neutral-900/95 backdrop-blur-xl
+                 border-b border-stone-200 dark:border-neutral-800 transition-colors duration-300">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-2 sm:gap-2.5 4xl:gap-4">
+      <div class="w-8 h-8 sm:w-9 sm:h-9 3xl:w-11 3xl:h-11 4xl:w-14 4xl:h-14 5xl:w-16 5xl:h-16
+                  rounded-xl 4xl:rounded-2xl flex items-center justify-center
+                  text-sm sm:text-base 4xl:text-2xl 5xl:text-3xl
+                  bg-gradient-to-br from-lavender-300 to-rose-300
+                  shadow-[0_4px_20px_rgba(140,100,200,.25)]">✦</div>
+      <span class="font-serif text-base sm:text-lg 3xl:text-xl 4xl:text-3xl 5xl:text-4xl font-bold text-stone-900 dark:text-white">
+        Mi<span class="text-lavender-500 dark:text-lavender-300">s Tareas</span>
+      </span>
+    </div>
+
+    <!-- Stats desktop -->
+    <div class="hidden sm:flex gap-2 lg:gap-3 4xl:gap-4">
+      <div class="stat-pill flex items-center gap-1 4xl:gap-2
+                  px-3 lg:px-3.5 4xl:px-5 py-1.5 4xl:py-2.5
+                  rounded-full text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-medium
+                  bg-stone-200 dark:bg-neutral-800 text-stone-500 dark:text-stone-400">
+        📋 Total: <strong class="text-stone-800 dark:text-white ml-0.5" id="stat-total">0</strong>
+      </div>
+      <div class="stat-pill flex items-center gap-1 4xl:gap-2
+                  px-3 lg:px-3.5 4xl:px-5 py-1.5 4xl:py-2.5
+                  rounded-full text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-medium
+                  bg-stone-200 dark:bg-neutral-800 text-stone-500 dark:text-stone-400">
+        ✅ Hechas: <strong class="text-stone-800 dark:text-white ml-0.5" id="stat-done">0</strong>
+      </div>
+      <div class="stat-pill flex items-center gap-1 4xl:gap-2
+                  px-3 lg:px-3.5 4xl:px-5 py-1.5 4xl:py-2.5
+                  rounded-full text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-medium
+                  bg-stone-200 dark:bg-neutral-800 text-stone-500 dark:text-stone-400">
+        🔥 Hoy: <strong class="text-stone-800 dark:text-white ml-0.5" id="stat-today">0</strong>
+      </div>
+    </div>
+
+    <!-- Acciones derecha -->
+    <div class="flex items-center gap-2 4xl:gap-3">
+      <!-- Stats compactas móvil -->
+      <div class="flex sm:hidden items-center gap-2 text-xs mr-1">
+        <span class="text-stone-500 dark:text-stone-400">📋<strong class="text-stone-800 dark:text-white ml-0.5" id="stat-total-mobile">0</strong></span>
+        <span class="text-stone-500 dark:text-stone-400">✅<strong class="text-stone-800 dark:text-white ml-0.5" id="stat-done-mobile">0</strong></span>
+      </div>
+
+      <!-- Botón abrir sidebar (móvil/tablet) -->
+      <button id="sidebar-toggle"
+              class="lg:hidden p-2 4xl:p-3 rounded-xl 4xl:rounded-2xl border-none cursor-pointer
+                     text-sm 4xl:text-xl
+                     bg-stone-200 dark:bg-neutral-800 hover:bg-lavender-100 dark:hover:bg-neutral-700
+                     transition-all duration-200 active:scale-95"
+              aria-label="Abrir filtros" onclick="openSidebar()">🏷️</button>
+
+      <!-- Tema -->
+      <button id="theme-toggle"
+              class="p-2 4xl:p-3 rounded-xl 4xl:rounded-2xl border-none cursor-pointer
+                     text-sm sm:text-base 4xl:text-xl 5xl:text-2xl
+                     bg-stone-200 dark:bg-neutral-800 hover:bg-stone-300 dark:hover:bg-neutral-700
+                     transition-all duration-200 active:scale-95"
+              aria-label="Cambiar tema">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════════ BANNER RED ══════════════ -->
+  <div id="network-banner" class="network-banner" role="status" aria-live="polite">
+    <span id="network-text">⏳ Conectando con el servidor...</span>
+  </div>
+
+  <!-- ══════════════ OVERLAY MÓVIL ══════════════ -->
+  <div id="sidebar-overlay"
+       class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none
+              transition-opacity duration-300 lg:hidden"
+       onclick="closeSidebar()"></div>
+
+  <!-- ══════════════ LAYOUT ══════════════ -->
+  <!--
+    max-w escala según resolución:
+      ≤1536px  → 72rem  (1152px)
+      1920px   → 90rem  (1440px)
+      2560px   → 112rem (1792px)
+      3840px   → 136rem (2176px)
+  -->
+  <div class="mx-auto w-full
+              max-w-6xl 3xl:max-w-[90rem] 4xl:max-w-[112rem] 5xl:max-w-[136rem]
+              px-3 sm:px-5 lg:px-6 3xl:px-10 4xl:px-14 5xl:px-20
+              py-4 sm:py-6 lg:py-8 3xl:py-10 4xl:py-14 5xl:py-20
+              pb-12 4xl:pb-20">
+
+    <!-- Grid: sidebar fija + main (solo desktop) -->
+    <div class="lg:grid lg:gap-6 3xl:gap-8 4xl:gap-10 5xl:gap-14"
+         style="grid-template-columns: var(--sidebar-w, 268px) 1fr;">
+
+      <!-- ══════ SIDEBAR ══════ -->
+      <aside id="sidebar"
+             class="fixed top-0 right-0 h-full w-72 sm:w-80 z-50 overflow-y-auto
+                    px-4 py-5 pt-16
+                    bg-stone-100 dark:bg-neutral-950
+                    shadow-[-12px_0_40px_rgba(0,0,0,.14)] dark:shadow-[-12px_0_40px_rgba(0,0,0,.5)]
+                    translate-x-full transition-transform duration-300 ease-out
+                    lg:static lg:h-auto lg:w-auto lg:translate-x-0 lg:shadow-none
+                    lg:bg-transparent lg:dark:bg-transparent lg:px-0 lg:py-0 lg:pt-0 lg:overflow-visible
+                    flex flex-col gap-4 3xl:gap-5 4xl:gap-6">
+
+        <!-- Cerrar (solo móvil/tablet) -->
+        <div class="flex items-center justify-between mb-1 lg:hidden">
+          <span class="font-serif text-sm font-bold text-stone-900 dark:text-white">Filtros y progreso</span>
+          <button onclick="closeSidebar()"
+                  class="p-1.5 rounded-lg bg-stone-200 dark:bg-neutral-800 border-none cursor-pointer text-xs
+                         text-stone-500 hover:text-rose-500 transition-colors">✕ cerrar</button>
+        </div>
+
+        <!-- Widget Progreso -->
+        <div class="widget bg-white dark:bg-neutral-900 rounded-2xl 4xl:rounded-3xl
+                    p-4 sm:p-5 4xl:p-7 5xl:p-9
+                    shadow-[0_4px_24px_rgba(140,100,200,.1)] dark:shadow-[0_8px_32px_rgba(140,100,200,.18)]
+                    border border-lavender-100 dark:border-neutral-800 transition-colors duration-300">
+          <div class="font-serif text-sm sm:text-base 4xl:text-xl 5xl:text-2xl
+                      text-stone-900 dark:text-white mb-3 sm:mb-4 4xl:mb-5">📊 Progreso</div>
+          <div class="flex justify-center">
+            <!-- SVG se escala con CSS en 4K -->
+            <svg viewBox="0 0 100 100" class="progress-ring ring-svg">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"   stop-color="#c4b5f4"/>
+                  <stop offset="100%" stop-color="#f7a8b8"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg stroke-lavender-100 dark:stroke-neutral-700" cx="50" cy="50" r="35"/>
+              <circle class="ring-fill" cx="50" cy="50" r="35" id="ring"/>
+              <g class="ring-text-group">
+                <text id="ring-pct" x="50" y="47"
+                      style="font-size:1.3rem;font-family:'Playfair Display',serif;font-weight:700;fill:#1c1917;dominant-baseline:central;text-anchor:middle;">0%</text>
+                <text x="50" y="61" id="ring-sub"
+                      style="font-size:0.62rem;fill:#78716f;text-anchor:middle;dominant-baseline:central;">completado</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Widget Categorías -->
+        <div class="widget bg-white dark:bg-neutral-900 rounded-2xl 4xl:rounded-3xl
+                    p-4 sm:p-5 4xl:p-7 5xl:p-9
+                    shadow-[0_4px_24px_rgba(140,100,200,.1)] dark:shadow-[0_8px_32px_rgba(140,100,200,.18)]
+                    border border-lavender-100 dark:border-neutral-800 transition-colors duration-300">
+          <div class="font-serif text-sm sm:text-base 4xl:text-xl 5xl:text-2xl
+                      text-stone-900 dark:text-white mb-3 sm:mb-4 4xl:mb-5">🏷️ Categorías</div>
+          <div id="cat-list" class="flex flex-col gap-1 4xl:gap-2">
+
+            <button class="cat-btn active flex items-center justify-between
+                           px-3 4xl:px-4 py-2 4xl:py-3 rounded-xl 4xl:rounded-2xl
+                           border-none cursor-pointer text-sm 4xl:text-base 5xl:text-lg font-semibold
+                           bg-lavender-100 dark:bg-neutral-800 text-stone-900 dark:text-white
+                           transition-all duration-200" onclick="filterCat(this,'all')">
+              <span class="flex items-center gap-2.5 4xl:gap-3">
+                <span class="w-2 h-2 4xl:w-3 4xl:h-3 rounded-full bg-lavender-300 flex-shrink-0"></span>Todas
+              </span>
+              <span class="rounded-full px-2 4xl:px-3 py-0.5 text-[0.65rem] 4xl:text-xs font-semibold
+                           bg-lavender-200 dark:bg-neutral-700 text-stone-500 dark:text-stone-400" id="cnt-all">0</span>
+            </button>
+
+            <button class="cat-btn flex items-center justify-between
+                           px-3 4xl:px-4 py-2 4xl:py-3 rounded-xl 4xl:rounded-2xl
+                           border-none cursor-pointer text-sm 4xl:text-base 5xl:text-lg
+                           text-stone-500 dark:text-stone-400
+                           hover:bg-lavender-100 dark:hover:bg-neutral-800 hover:text-stone-900 dark:hover:text-white
+                           transition-all duration-200" onclick="filterCat(this,'personal')">
+              <span class="flex items-center gap-2.5 4xl:gap-3">
+                <span class="w-2 h-2 4xl:w-3 4xl:h-3 rounded-full bg-rose-300 flex-shrink-0"></span>Personal
+              </span>
+              <span class="rounded-full px-2 4xl:px-3 py-0.5 text-[0.65rem] 4xl:text-xs font-semibold
+                           bg-lavender-100 dark:bg-neutral-700 text-stone-500 dark:text-stone-400" id="cnt-personal">0</span>
+            </button>
+
+            <button class="cat-btn flex items-center justify-between
+                           px-3 4xl:px-4 py-2 4xl:py-3 rounded-xl 4xl:rounded-2xl
+                           border-none cursor-pointer text-sm 4xl:text-base 5xl:text-lg
+                           text-stone-500 dark:text-stone-400
+                           hover:bg-lavender-100 dark:hover:bg-neutral-800 hover:text-stone-900 dark:hover:text-white
+                           transition-all duration-200" onclick="filterCat(this,'trabajo')">
+              <span class="flex items-center gap-2.5 4xl:gap-3">
+                <span class="w-2 h-2 4xl:w-3 4xl:h-3 rounded-full bg-sky-200 flex-shrink-0"></span>Trabajo
+              </span>
+              <span class="rounded-full px-2 4xl:px-3 py-0.5 text-[0.65rem] 4xl:text-xs font-semibold
+                           bg-lavender-100 dark:bg-neutral-700 text-stone-500 dark:text-stone-400" id="cnt-trabajo">0</span>
+            </button>
+
+            <button class="cat-btn flex items-center justify-between
+                           px-3 4xl:px-4 py-2 4xl:py-3 rounded-xl 4xl:rounded-2xl
+                           border-none cursor-pointer text-sm 4xl:text-base 5xl:text-lg
+                           text-stone-500 dark:text-stone-400
+                           hover:bg-lavender-100 dark:hover:bg-neutral-800 hover:text-stone-900 dark:hover:text-white
+                           transition-all duration-200" onclick="filterCat(this,'salud')">
+              <span class="flex items-center gap-2.5 4xl:gap-3">
+                <span class="w-2 h-2 4xl:w-3 4xl:h-3 rounded-full bg-mint-300 flex-shrink-0"></span>Salud
+              </span>
+              <span class="rounded-full px-2 4xl:px-3 py-0.5 text-[0.65rem] 4xl:text-xs font-semibold
+                           bg-lavender-100 dark:bg-neutral-700 text-stone-500 dark:text-stone-400" id="cnt-salud">0</span>
+            </button>
+
+            <button class="cat-btn flex items-center justify-between
+                           px-3 4xl:px-4 py-2 4xl:py-3 rounded-xl 4xl:rounded-2xl
+                           border-none cursor-pointer text-sm 4xl:text-base 5xl:text-lg
+                           text-stone-500 dark:text-stone-400
+                           hover:bg-lavender-100 dark:hover:bg-neutral-800 hover:text-stone-900 dark:hover:text-white
+                           transition-all duration-200" onclick="filterCat(this,'hogar')">
+              <span class="flex items-center gap-2.5 4xl:gap-3">
+                <span class="w-2 h-2 4xl:w-3 4xl:h-3 rounded-full bg-peach-200 flex-shrink-0"></span>Hogar
+              </span>
+              <span class="rounded-full px-2 4xl:px-3 py-0.5 text-[0.65rem] 4xl:text-xs font-semibold
+                           bg-lavender-100 dark:bg-neutral-700 text-stone-500 dark:text-stone-400" id="cnt-hogar">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Widget Inspiración -->
+        <div class="widget rounded-2xl 4xl:rounded-3xl p-4 sm:p-5 4xl:p-7 5xl:p-9 border-none
+                    bg-gradient-to-br from-lavender-100 to-rose-100
+                    dark:from-indigo-900 dark:to-orange-950
+                    shadow-[0_4px_24px_rgba(140,100,200,.1)] transition-colors duration-300">
+          <div class="font-serif text-sm sm:text-base 4xl:text-xl 5xl:text-2xl
+                      text-stone-900 dark:text-white mb-2 sm:mb-3 4xl:mb-4">💬 Inspiración</div>
+          <p class="font-serif text-xs sm:text-sm 4xl:text-base 5xl:text-xl
+                    leading-relaxed text-stone-900 dark:text-white mb-2 4xl:mb-3" id="quote-text">
+            "El secreto de salir adelante es comenzar."
+          </p>
+          <p class="text-[0.7rem] 4xl:text-sm 5xl:text-base text-stone-500 dark:text-stone-300" id="quote-author">— Mark Twain</p>
+        </div>
+
+      </aside>
+
+      <!-- ══════ MAIN ══════ -->
+      <main class="flex flex-col gap-3 sm:gap-4 4xl:gap-6 5xl:gap-8 mt-3 sm:mt-4 lg:mt-0">
+
+        <!-- Nueva tarea -->
+        <div class="bg-white dark:bg-neutral-900 rounded-2xl 4xl:rounded-3xl
+                    p-4 sm:p-5 lg:p-6 4xl:p-8 5xl:p-11
+                    shadow-[0_4px_24px_rgba(140,100,200,.1)] dark:shadow-[0_8px_32px_rgba(140,100,200,.18)]
+                    border border-lavender-100 dark:border-neutral-800 transition-colors duration-300">
+          <h2 class="text-base sm:text-lg 4xl:text-2xl 5xl:text-3xl
+                     text-stone-900 dark:text-white mb-3 sm:mb-4 4xl:mb-5">✨ Nueva tarea</h2>
+
+          <div class="flex flex-col gap-2.5 4xl:gap-3">
+            <input
+              type="text"
+              id="task-input"
+              placeholder="¿Qué tienes que hacer hoy?"
+              class="w-full px-4 4xl:px-5 py-2.5 4xl:py-4
+                     text-sm 4xl:text-base 5xl:text-lg
+                     border-[1.5px] border-lavender-100 dark:border-neutral-700
+                     rounded-xl 4xl:rounded-2xl
+                     bg-stone-50 dark:bg-neutral-800
+                     text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500
+                     outline-none transition-all duration-200
+                     focus:border-lavender-300 focus:ring-2 focus:ring-lavender-300/25"/>
+
+            <div class="flex flex-wrap gap-2 4xl:gap-3">
+              <select id="priority-select"
+                      class="flex-1 min-w-[100px] 4xl:min-w-[160px]
+                             px-3 4xl:px-4 py-2.5 4xl:py-4
+                             text-sm 4xl:text-base 5xl:text-lg
+                             border-[1.5px] border-lavender-100 dark:border-neutral-700
+                             rounded-xl 4xl:rounded-2xl
+                             bg-stone-50 dark:bg-neutral-800 text-stone-900 dark:text-white
+                             outline-none cursor-pointer transition-all duration-200">
+                <option value="medium">🟡 Media</option>
+                <option value="high">🔴 Alta</option>
+                <option value="low">🟢 Baja</option>
+              </select>
+              <select id="cat-select"
+                      class="flex-1 min-w-[110px] 4xl:min-w-[170px]
+                             px-3 4xl:px-4 py-2.5 4xl:py-4
+                             text-sm 4xl:text-base 5xl:text-lg
+                             border-[1.5px] border-lavender-100 dark:border-neutral-700
+                             rounded-xl 4xl:rounded-2xl
+                             bg-stone-50 dark:bg-neutral-800 text-stone-900 dark:text-white
+                             outline-none cursor-pointer transition-all duration-200">
+                <option value="personal">👤 Personal</option>
+                <option value="trabajo">💼 Trabajo</option>
+                <option value="salud">🌿 Salud</option>
+                <option value="hogar">🏠 Hogar</option>
+              </select>
+              <button onclick="addTask()"
+                      class="flex-1 sm:flex-none
+                             px-5 4xl:px-8 py-2.5 4xl:py-4
+                             text-sm 4xl:text-base 5xl:text-lg font-semibold text-white
+                             rounded-xl 4xl:rounded-2xl
+                             bg-gradient-to-r from-lavender-300 to-rose-300
+                             shadow-[0_4px_14px_rgba(196,181,244,.45)] border-none cursor-pointer
+                             transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]
+                             whitespace-nowrap">
+                + Añadir
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de tareas -->
+        <div class="bg-white dark:bg-neutral-900 rounded-2xl 4xl:rounded-3xl
+                    p-4 sm:p-5 lg:p-6 4xl:p-8 5xl:p-11 flex-1
+                    shadow-[0_4px_24px_rgba(140,100,200,.1)] dark:shadow-[0_8px_32px_rgba(140,100,200,.18)]
+                    border border-lavender-100 dark:border-neutral-800 transition-colors duration-300">
+
+          <div class="flex items-center justify-between mb-3 sm:mb-4 4xl:mb-5">
+            <h2 class="text-base sm:text-lg 4xl:text-2xl 5xl:text-3xl text-stone-900 dark:text-white">
+              📌 Lista de tareas
+            </h2>
+            <button onclick="clearDone()"
+                    class="text-xs 4xl:text-sm 5xl:text-base
+                           text-stone-500 dark:text-stone-400 bg-transparent border-none cursor-pointer
+                           px-2.5 4xl:px-4 py-1 4xl:py-2 rounded-lg 4xl:rounded-xl
+                           transition-all duration-150
+                           hover:bg-rose-100 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-300">
+              Borrar completadas
+            </button>
+          </div>
+
+          <div class="relative mb-3 sm:mb-4 4xl:mb-5">
+            <span class="absolute left-3.5 4xl:left-4 top-1/2 -translate-y-1/2
+                         text-stone-400 pointer-events-none text-sm 4xl:text-lg">🔍</span>
+            <input
+              type="text"
+              id="filter-input"
+              placeholder="Buscar tarea..."
+              class="w-full pl-10 4xl:pl-12 pr-4 4xl:pr-5 py-2.5 4xl:py-4
+                     text-sm 4xl:text-base 5xl:text-lg
+                     border-[1.5px] border-lavender-100 dark:border-neutral-700
+                     rounded-xl 4xl:rounded-2xl
+                     bg-white dark:bg-neutral-800
+                     text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500
+                     outline-none transition-all duration-200
+                     focus:border-lavender-300 focus:ring-2 focus:ring-lavender-300/25"/>
+          </div>
+
+          <ul id="task-list" class="flex flex-col gap-2 sm:gap-2.5 4xl:gap-3 5xl:gap-4 list-none p-0 m-0"></ul>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
